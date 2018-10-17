@@ -57,8 +57,6 @@ public class CustomCharacterController : MonoBehaviour, IBounceBehaviour
 
     #endregion
     #region MonoBehaviour
-
-
     private void Update()
     {
         if(!this.characterController.isGrounded)

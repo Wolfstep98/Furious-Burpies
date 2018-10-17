@@ -3,19 +3,26 @@ using UnityEngine;
 
 public interface IBounceBehaviour
 {
-    void Bounce(Vector2 frictionCoef, Vector2 normal);
+    void Bounce(Vector2 bounceCoef, Vector2 normal);
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BounceBehaviour : MonoBehaviour, IBounceBehaviour
 {
     #region Fields & Properties
-    [Header("References")]
+    [Header("Properties")]
     [SerializeField]
-    new private Rigidbody2D rigidbody2D = null;
+    private float bounceThreshold = 1.0f;
 
     [SerializeField]
     private Vector2 velocity = Vector2.zero;
+
+    [Header("References")]
+    [SerializeField]
+    private CustomRigidbody2D customRigidbody2D = null;
+    [SerializeField]
+    new private Rigidbody2D rigidbody2D = null;
+
     #endregion
 
     #region Methods
@@ -24,23 +31,40 @@ public class BounceBehaviour : MonoBehaviour, IBounceBehaviour
 #if UNITY_EDITOR
         if (this.rigidbody2D == null)
             Debug.LogError("[Missing references] - rigidbody2D not set !");
+        if (this.customRigidbody2D == null)
+            Debug.LogError("[Missing references] - customRigidbody2D not set !");
 #endif
     }
 
     private void FixedUpdate()
     {
-        this.velocity = this.rigidbody2D.velocity;
+        //this.velocity = this.rigidbody2D.velocity;
+        this.velocity = this.customRigidbody2D.Velocity;
     }
 
-    public void Bounce(Vector2 frictionCoef, Vector2 normal)
+    public void Bounce(Vector2 bounceCoef, Vector2 normal)
     {
-        Vector2 vel = this.velocity;
-        
+        Vector2 vel = this.customRigidbody2D.Velocity;
+
         Vector2 result = vel - (2 * (Vector2.Dot(vel, normal)) * normal);
 
-        result *= frictionCoef;
+        if (Mathf.RoundToInt(normal.y) == 1)
+        {
+            if (vel.y > -this.bounceThreshold)
+            {
+                Debug.Log("STOP");
+                result = Vector2.zero;
+                this.customRigidbody2D.IsGrounded = true;
+            }
+            else
+                result *= bounceCoef;
+        }
+        else if(Mathf.RoundToInt(normal.y) == -1)
+        {
+                result *= bounceCoef;
+        }
 
-        this.rigidbody2D.velocity = result;
+        this.customRigidbody2D.Velocity = result;
 
         Debug.Log("vector : " + vel + " | result : " + result);
     }

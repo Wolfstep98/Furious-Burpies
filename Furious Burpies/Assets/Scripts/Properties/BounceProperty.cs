@@ -6,7 +6,7 @@ public class BounceProperty : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
-    private Vector2 bounceFrictionCoef = new Vector2(0.9f, 0.9f);
+    private Vector2 bounceCoef = new Vector2(0.9f, 0.9f);
 
     #endregion
 
@@ -17,7 +17,7 @@ public class BounceProperty : MonoBehaviour
         if (collision.gameObject.tag == GameObjectsTags.Player)
         {
             IBounceBehaviour bounceBehaviour = collision.gameObject.GetComponent<BounceBehaviour>();
-            bounceBehaviour.Bounce(this.bounceFrictionCoef, -collision.contacts[0].normal);
+            bounceBehaviour.Bounce(this.bounceCoef, -collision.contacts[0].normal);
             Debug.Log("BOUNCE !");
         }
     }

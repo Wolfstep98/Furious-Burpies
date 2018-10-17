@@ -20,20 +20,22 @@ public class LockBehaviour : MonoBehaviour
     private GameObject player = null;
     [SerializeField]
     private Rigidbody2D rigid = null;
+    [SerializeField]
+    private CustomRigidbody2D customRigid = null;
     #endregion
 
     #region Methods
     public void Lock()
     {
-        this.rigid.velocity = Vector2.zero;
-        this.rigid.angularVelocity = 0.0f;
-        this.rigid.isKinematic = true;
+        this.customRigid.Velocity = Vector2.zero;
+        //this.rigid.angularVelocity = 0.0f;
+        //this.rigid.isKinematic = true;
         this.locked = true;
     }
 
     public void Unlock()
     {
-        this.rigid.isKinematic = false;
+        //this.rigid.isKinematic = false;
         this.locked = false;
     }
     #endregion
