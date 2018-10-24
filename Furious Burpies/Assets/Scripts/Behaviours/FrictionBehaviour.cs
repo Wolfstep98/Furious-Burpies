@@ -40,6 +40,9 @@ public class FrictionBehaviour : MonoBehaviour, IFrictionBehaviour
             else
                 vel += frictionCoef * GameTime.deltaTime;
 
+            if (Mathf.Abs(vel.x) < this.frictionThreshold)
+                vel.x = 0.0f;
+
             this.customRigidbody2D.Velocity = vel;
         }
     }

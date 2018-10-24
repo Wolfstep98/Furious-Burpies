@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class CustomCharacterController : MonoBehaviour, IBounceBehaviour
+public class CustomCharacterController : MonoBehaviour
 {
     #region Fields & Properties
     [Header("Gravity")]
@@ -83,15 +83,15 @@ public class CustomCharacterController : MonoBehaviour, IBounceBehaviour
 
     public void Bounce(Vector2 frictionCoef, Vector2 normal)
     {
-        Vector2 vel = this.characterController.velocity;
+        //Vector2 vel = this.characterController.velocity;
 
-        Vector2 result = vel - (2 * (Vector2.Dot(vel, normal)) * normal);
+        //Vector2 result = vel - (2 * (Vector2.Dot(vel, normal)) * normal);
 
-        result *= frictionCoef;
+        //result *= frictionCoef;
 
-        this.characterController.Move(result);
+        //this.characterController.Move(result);
 
-        Debug.Log("vector : " + vel + " | result : " + result);
+        //Debug.Log("vector : " + vel + " | result : " + result);
     }
     #endregion
 }

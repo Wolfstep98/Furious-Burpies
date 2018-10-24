@@ -14,6 +14,10 @@ public class CustomRigidbody2D : MonoBehaviour
     public bool IsGrounded { get { return this.isGrounded; } set { this.isGrounded = value; } }
 
     [SerializeField]
+    private bool isStick = false;
+    public bool IsStick { get { return this.isStick; } set { this.isStick = value; } }
+
+    [SerializeField]
     private float gravity = -9.81f;
 
     [SerializeField]
@@ -39,7 +43,7 @@ public class CustomRigidbody2D : MonoBehaviour
     {
         Vector2 currentPosition = this.rigidbody2D.position;
 
-        if (!this.isGrounded)
+        if (!this.isGrounded && !this.isStick)
         {
             this.velocity.y += this.gravity * GameTime.deltaTime;
             this.velocity.y = Mathf.Clamp(this.velocity.y, this.maxGravity, 1000.0f);
@@ -58,8 +62,10 @@ public class CustomRigidbody2D : MonoBehaviour
     #region Catapult
     public void CatapultFromGround()
     {
+        this.transform.parent = null;
         this.isMoving = true;
         this.isGrounded = false;
+        this.isStick = false;
     }
     #endregion
 
@@ -72,12 +78,12 @@ public class CustomRigidbody2D : MonoBehaviour
             int normalX = Mathf.RoundToInt(collision.contacts[0].normal.x);
             if (normalY == 1)
             {
-                this.isGrounded = true;
-                this.velocity.y = 0.0f;
+                //this.isGrounded = true;
+                //this.velocity.y = 0.0f;
             }
             if(Mathf.Abs(normalX) == 1)
             {
-                this.velocity.x = 0.0f;
+                //this.velocity.x = 0.0f;
             }
         }
     }

@@ -57,11 +57,20 @@ public class BounceBehaviour : MonoBehaviour, IBounceBehaviour
                 this.customRigidbody2D.IsGrounded = true;
             }
             else
+            {
                 result *= bounceCoef;
+                Debug.Log("Bounce Ground");
+            }
         }
         else if(Mathf.RoundToInt(normal.y) == -1)
         {
-                result *= bounceCoef;
+            result *= bounceCoef;
+            Debug.Log("Bounce top");
+        }
+
+        if(result.y == 0)
+        {
+            this.customRigidbody2D.IsGrounded = true;
         }
 
         this.customRigidbody2D.Velocity = result;

@@ -69,7 +69,7 @@ public class CatapultInput : MonoBehaviour
 #if UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
-            if (this.customRigidbody2D.IsGrounded)
+            if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
             {
                 this.screenLockPos = Input.mousePosition;
                 this.lockPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -112,7 +112,7 @@ public class CatapultInput : MonoBehaviour
         {
             if (this.canCatapult)
             {
-                if (this.customRigidbody2D.IsGrounded)
+                if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
                 {
                     this.customRigidbody2D.CatapultFromGround();
                 }
@@ -140,7 +140,7 @@ public class CatapultInput : MonoBehaviour
             Touch touch = Input.touches[0];
             if (!this.playerLocked)
             {
-                if (this.customRigidbody2D.IsGrounded)
+                if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
                 {
                     this.playerLocked = true;
                     this.screenLockPos = touch.position;
@@ -197,7 +197,7 @@ public class CatapultInput : MonoBehaviour
                 //Debug.DrawRay(this.player.transform.position, direction, Color.red, 10.00f);
                 //Catapult !!!
 
-                if (this.customRigidbody2D.IsGrounded)
+                if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
                 {
                     this.customRigidbody2D.CatapultFromGround();
                 }
