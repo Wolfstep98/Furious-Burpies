@@ -6,6 +6,7 @@ public class StickProperty : MonoBehaviour
     [Header("Parameters")]
     [SerializeField]
     private bool isEnable = true;
+    public bool IsEnable { get { return this.isEnable; } set { this.isEnable = value; } }
     #endregion
 
     #region Methods

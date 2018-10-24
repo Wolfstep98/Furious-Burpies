@@ -178,5 +178,18 @@ public class TerrainGeneration : MonoBehaviour
         GameObject lastTerrain = this.terrainQueue.Dequeue();
         lastTerrain.SetActive(false);
     }
+
+    public void ToggleBounce()
+    {
+        for (int i = 0; i < this.basics.Length; i++)
+        {
+            Transform parent = this.basics[i].transform.Find("Platforms");
+            for (int c = 0; c < parent.childCount;c++)
+            {
+                StickProperty property = parent.GetChild(c).GetComponent<StickProperty>();
+                property.IsEnable = !property.IsEnable;
+            }
+        }
+    }
     #endregion
 }

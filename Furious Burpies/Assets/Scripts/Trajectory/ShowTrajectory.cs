@@ -8,6 +8,10 @@ public class ShowTrajectory : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
+    private bool isShowing = false;
+    public bool IsShowing { get { return this.isShowing; } }
+
+    [SerializeField]
     private float predictionRange = 2.0f;
     [SerializeField]
     private float interval = 0.2f;
@@ -41,6 +45,7 @@ public class ShowTrajectory : MonoBehaviour
 
     public void ShowTrajectoryPrediction()
     {
+        this.isShowing = true;
         int dotIndex = 0;
         for (float i = this.interval; i < this.predictionRange && dotIndex < this.predictionDots.Length; i += this.interval, dotIndex++)
         {
@@ -52,6 +57,8 @@ public class ShowTrajectory : MonoBehaviour
     }
     public void HideTrajectoryPrediction(int startIndex)
     {
+        if (startIndex == 0)
+            this.isShowing = false;
         for(int i = startIndex; i < this.predictionDots.Length;i++)
         {
             this.predictionDots[i].SetActive(false);
