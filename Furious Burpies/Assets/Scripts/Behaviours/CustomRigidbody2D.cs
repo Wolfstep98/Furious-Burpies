@@ -19,6 +19,7 @@ public class CustomRigidbody2D : MonoBehaviour
 
     [SerializeField]
     private float gravity = -9.81f;
+    public float Gravity { get { return this.gravity; } }
 
     [SerializeField]
     private float maxGravity = -9.81f;

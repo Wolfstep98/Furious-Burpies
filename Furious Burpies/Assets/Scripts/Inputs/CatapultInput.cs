@@ -24,6 +24,9 @@ public class CatapultInput : MonoBehaviour
     [SerializeField]
     private float distanceBetweenLockAndFinger = 0.0f;
 
+    [SerializeField]
+    private Vector2 predictedVelocity = Vector2.zero;
+
     [Header("References")]
     [Header("Player",order = 1)]
     [SerializeField]
@@ -36,6 +39,10 @@ public class CatapultInput : MonoBehaviour
     private SlowDownBehaviour slowDownBehaviour = null;
     [SerializeField]
     private LifeProperty lifeProperty = null;
+    [SerializeField]
+    private TrajectoryPrediction trajectoryPrediction = null;
+    [SerializeField]
+    private ShowTrajectory showTrajectory = null;
 
     [Space(5.0f)]
     [Header("Camera", order = 2)]
@@ -62,7 +69,11 @@ public class CatapultInput : MonoBehaviour
         if (this.slowDownBehaviour == null)
             Debug.LogError("[Missing Reference] slowDownBehaviour is not set !");
 #endif
+
+        this.trajectoryPrediction.Setup(this.customRigidbody2D.Gravity, this.customRigidbody2D.transform.position, Vector2.zero);
     }
+
+    
 
     private void Update()
     {
@@ -75,6 +86,8 @@ public class CatapultInput : MonoBehaviour
                 this.lockPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
                 this.distanceBetweenLockAndFinger = 0.0f;
 
+                this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+
                 this.canCatapult = true;
             }
             else if (this.lifeProperty.Life > 0)
@@ -82,6 +95,8 @@ public class CatapultInput : MonoBehaviour
                 this.screenLockPos = Input.mousePosition;
                 this.lockPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
                 this.distanceBetweenLockAndFinger = 0.0f;
+
+                this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
 
                 this.lifeProperty.TakeDamage(1);
                 this.slowDownBehaviour.SlowDown();
@@ -106,6 +121,13 @@ public class CatapultInput : MonoBehaviour
                     Debug.DrawRay(this.lockPos, direction, Color.red);
                 }
                 //Feedback trajectory
+                if(this.slowDownBehaviour.IsTimeSlowDown)
+                {
+                    this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+                }
+                this.predictedVelocity = direction;
+                this.trajectoryPrediction.InitialVelocity = this.predictedVelocity;
+                this.showTrajectory.ShowTrajectoryPrediction();
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -132,6 +154,8 @@ public class CatapultInput : MonoBehaviour
                 Debug.DrawRay(this.lockPos, direction, Color.red, 10.00f);
                 Debug.DrawRay(this.player.transform.position, direction, Color.black);
                 //Catapult !!!
+
+                this.showTrajectory.HideTrajectoryPrediction(0);
             }
         }
 #else
@@ -146,6 +170,7 @@ public class CatapultInput : MonoBehaviour
                     this.screenLockPos = touch.position;
                     this.lockPos = this.mainCamera.ScreenToWorldPoint(touch.position);
                     this.distanceBetweenLockAndFinger = 0.0f;
+                    this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
                 }
                 else if (this.lifeProperty.Life > 0)
                 {
@@ -153,6 +178,8 @@ public class CatapultInput : MonoBehaviour
                     this.screenLockPos = touch.position;
                     this.lockPos = this.mainCamera.ScreenToWorldPoint(touch.position);
                     this.distanceBetweenLockAndFinger = 0.0f;
+   
+                    this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
 
                     this.lifeProperty.TakeDamage(1);
                     this.slowDownBehaviour.SlowDown();
@@ -164,12 +191,6 @@ public class CatapultInput : MonoBehaviour
             }
             else
             {
-                //this.lastScreenPos = touch.position;
-                //this.lastPos = this.mainCamera.ScreenToWorldPoint(touch.position);
-                //this.distanceBetweenLockAndFinger = Vector2.Distance(this.screenLockPos, touch.position);
-                //Vector2 direction = this.lockPos - this.lastPos;
-                //Feedback trajectory
-
                 if (this.playerLocked)
                 {
                     this.lastScreenPos = touch.position;
@@ -182,6 +203,13 @@ public class CatapultInput : MonoBehaviour
                         Debug.DrawRay(this.lockPos, direction, Color.red);
                     }
                     //Feedback trajectory
+                    if(this.slowDownBehaviour.IsTimeSlowDown)
+                    {
+                        this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+                    }
+                    this.predictedVelocity = direction;
+                    this.trajectoryPrediction.InitialVelocity = this.predictedVelocity;
+                    this.showTrajectory.ShowTrajectoryPrediction();
                 }
             }
         }
@@ -189,14 +217,6 @@ public class CatapultInput : MonoBehaviour
         {
             if (this.playerLocked)
             {
-                //this.lockBehaviour.Unlock();
-                //this.playerLocked = false;
-                //Vector2 direction = this.lockPos - this.lastPos;
-                //this.player.GetComponent<Rigidbody2D>().AddForce(direction * 50, ForceMode2D.Force);
-                //Debug.Log("Jump in " + direction);
-                //Debug.DrawRay(this.player.transform.position, direction, Color.red, 10.00f);
-                //Catapult !!!
-
                 if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
                 {
                     this.customRigidbody2D.CatapultFromGround();
@@ -217,7 +237,7 @@ public class CatapultInput : MonoBehaviour
                 Debug.DrawRay(this.lockPos, direction, Color.red, 10.00f);
                 Debug.DrawRay(this.player.transform.position, direction, Color.black);
                 //Catapult !!!
-
+                this.showTrajectory.HideTrajectoryPrediction(0);
             }
         }
 #endif
