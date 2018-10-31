@@ -125,7 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4213050749950240}
   - component: {fileID: 212030971649087516}
-  - component: {fileID: 61791425622777510}
+  - component: {fileID: 65554001352301780}
   - component: {fileID: 114321301595313978}
   - component: {fileID: 114410156402034906}
   m_Layer: 0
@@ -251,7 +251,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1242463167118102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1.5460778, y: -0.13446593, z: 1.952941}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4656695457852584}
@@ -304,31 +304,18 @@ Transform:
   m_Father: {fileID: 4748291256790518}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61791425622777510
-BoxCollider2D:
+--- !u!65 &65554001352301780
+BoxCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1463148559131398}
-  m_Enabled: 1
-  m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Size: {x: 1, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114321301595313978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -340,6 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e388f4be36420478a793b7277f4859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnabled: 1
   frictionCoef: {x: 5, y: 0}
 --- !u!114 &114410156402034906
 MonoBehaviour:
@@ -352,6 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6336c542f00524428a8d23ab440d569, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnabled: 1
   bounceCoef: {x: 0.9, y: 0}
 --- !u!212 &212030971649087516
 SpriteRenderer:

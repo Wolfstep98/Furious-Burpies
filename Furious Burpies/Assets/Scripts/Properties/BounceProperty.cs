@@ -6,7 +6,9 @@ public class BounceProperty : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
-    private Vector2 bounceCoef = new Vector2(0.9f, 0.9f);
+    private bool isEnabled = true;
+    [SerializeField]
+    private Vector2 bounceCoef = new Vector2(0.5f, 0.5f);
 
     #endregion
 
@@ -19,6 +21,18 @@ public class BounceProperty : MonoBehaviour
             IBounceBehaviour bounceBehaviour = collision.gameObject.GetComponent<BounceBehaviour>();
             bounceBehaviour.Bounce(this.bounceCoef, -collision.contacts[0].normal);
             Debug.Log("BOUNCE !");
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(this.isEnabled)
+        {
+            if(hit.gameObject.tag == GameObjectsTags.Player)
+            {
+                IBounceBehaviour bounceBehaviour = hit.gameObject.GetComponent<CustomCharacterController>();
+                bounceBehaviour.Bounce(this.bounceCoef, hit.normal);
+            }
         }
     }
     #endregion

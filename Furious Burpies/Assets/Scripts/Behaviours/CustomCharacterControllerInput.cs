@@ -1,10 +1,11 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CatapultInput : MonoBehaviour
+public class CustomCharacterControllerInput : MonoBehaviour 
 {
     #region Fields & Properties
-    [Header("Variables")]
+    [Header("Parameters")]
     [SerializeField]
     private bool inputEnabled = true;
     public bool InputEnabled { set { this.inputEnabled = value; } }
@@ -36,13 +37,11 @@ public class CatapultInput : MonoBehaviour
     private Vector2 predictedVelocity = Vector2.zero;
 
     [Header("References")]
-    [Header("Player",order = 1)]
+    [Header("Player", order = 1)]
     [SerializeField]
     private GameObject player = null;
     [SerializeField]
-    private CustomRigidbody2D customRigidbody2D = null;
-    [SerializeField]
-    private LockBehaviour lockBehaviour = null;
+    private CustomCharacterController customCharacterController = null;
     [SerializeField]
     private SlowDownBehaviour slowDownBehaviour = null;
     [SerializeField]
@@ -74,10 +73,6 @@ public class CatapultInput : MonoBehaviour
             Debug.LogError("[Missing Reference] player is not set !");
         if (this.mainCamera == null)
             Debug.LogError("[Missing Reference] mainCamera is not set !");
-        if (this.customRigidbody2D == null)
-            Debug.LogError("[Missing Reference] customRigidbody2D is not set !");
-        if (this.lockBehaviour == null)
-            Debug.LogError("[Missing Reference] lockBehaviour is not set !");
         if (this.slowDownBehaviour == null)
             Debug.LogError("[Missing Reference] slowDownBehaviour is not set !");
         if (this.pause == null)
@@ -90,7 +85,7 @@ public class CatapultInput : MonoBehaviour
     {
         this.maxInputDistance = Screen.width / 4.0f;
 
-        this.trajectoryPrediction.Setup(this.customRigidbody2D.Gravity, this.customRigidbody2D.transform.position, Vector2.zero);
+        this.trajectoryPrediction.Setup(this.customCharacterController.GravityForce, this.customCharacterController.transform.position, Vector2.zero);
     }
     #endregion
 
@@ -101,13 +96,13 @@ public class CatapultInput : MonoBehaviour
 #if UNITY_EDITOR
             if (Input.GetMouseButtonDown(0))
             {
-                if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
+                if (this.customCharacterController.IsGrounded || this.customCharacterController.IsStick)
                 {
                     this.screenLockPos = Input.mousePosition;
                     this.lockPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
                     this.distanceBetweenLockAndFinger = 0.0f;
 
-                    this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+                    this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
 
                     this.canCatapult = true;
                 }
@@ -117,7 +112,7 @@ public class CatapultInput : MonoBehaviour
                     this.lockPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
                     this.distanceBetweenLockAndFinger = 0.0f;
 
-                    this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+                    this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
 
                     this.slowDownBehaviour.SlowDown();
                     this.canCatapult = true;
@@ -154,7 +149,7 @@ public class CatapultInput : MonoBehaviour
                     //Feedback trajectory
                     if (this.slowDownBehaviour.IsTimeSlowDown)
                     {
-                        this.trajectoryPrediction.InitialPosition = this.customRigidbody2D.transform.position;
+                        this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
                     }
                     this.predictedVelocity = direction;
                     this.trajectoryPrediction.InitialVelocity = this.predictedVelocity;
@@ -165,9 +160,9 @@ public class CatapultInput : MonoBehaviour
             {
                 if (this.canCatapult)
                 {
-                    if (this.customRigidbody2D.IsGrounded || this.customRigidbody2D.IsStick)
+                    if (this.customCharacterController.IsGrounded || this.customCharacterController.IsStick)
                     {
-                        this.customRigidbody2D.CatapultFromGround();
+                        //this.customRigidbody2D.CatapultFromGround(); //TODO
                     }
                     else
                     {
@@ -175,14 +170,11 @@ public class CatapultInput : MonoBehaviour
                         this.slowDownBehaviour.RevertSlowDown();
                     }
 
-                    this.lockBehaviour.Lock();
-                    this.lockBehaviour.Unlock();
-
                     this.canCatapult = false;
 
                     //Clamp max distance
                     Vector2 screenDirection = (this.lastScreenPos - this.screenLockPos);
-                    if(screenDirection.magnitude > this.maxInputDistance)
+                    if (screenDirection.magnitude > this.maxInputDistance)
                     {
                         screenDirection.Normalize();
                         screenDirection *= this.maxInputDistance;
@@ -279,9 +271,6 @@ public class CatapultInput : MonoBehaviour
                         this.lifeProperty.TakeDamage(1);
                         this.slowDownBehaviour.RevertSlowDown();
                     }
-
-                    this.lockBehaviour.Lock();
-                    this.lockBehaviour.Unlock();
 
                     this.playerLocked = false;
 

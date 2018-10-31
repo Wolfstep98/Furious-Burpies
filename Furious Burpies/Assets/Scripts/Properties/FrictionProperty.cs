@@ -6,6 +6,8 @@ public class FrictionProperty : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
+    private bool isEnabled = true;
+    [SerializeField]
     private Vector2 frictionCoef = new Vector2(0.5f, 0.5f);
 
     #endregion
@@ -18,6 +20,18 @@ public class FrictionProperty : MonoBehaviour
         {
             IFrictionBehaviour frictionBehaviour = collision.gameObject.GetComponent<FrictionBehaviour>();
             frictionBehaviour.Friction(this.frictionCoef);
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(this.isEnabled)
+        {
+            if(hit.gameObject.tag == GameObjectsTags.Player)
+            {
+                IFrictionBehaviour frictionBehaviour = hit.gameObject.GetComponent<CustomCharacterController>();
+                frictionBehaviour.Friction(this.frictionCoef);
+            }
         }
     }
     #endregion

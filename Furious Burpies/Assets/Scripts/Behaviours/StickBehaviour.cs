@@ -2,7 +2,7 @@
 
 public interface IStickBehaviour
 {
-    void Stick(GameObject parent);
+    void Stick(Vector3 hitNormal);
 }
 
 public class StickBehaviour : MonoBehaviour, IStickBehaviour
@@ -11,6 +11,8 @@ public class StickBehaviour : MonoBehaviour, IStickBehaviour
     [Header("Properties")]
     [SerializeField]
     private CustomRigidbody2D customRigidbody2D = null;
+    [SerializeField]
+    private CustomCharacterController customCharacterController = null;
     #endregion
 
     #region Methods
@@ -22,11 +24,20 @@ public class StickBehaviour : MonoBehaviour, IStickBehaviour
 #endif
     }
 
-    public void Stick(GameObject parent)
+    public void Stick(Vector3 hitNormal)
     {
-        this.transform.SetParent(parent.transform);
-        this.customRigidbody2D.Velocity = Vector2.zero;
-        this.customRigidbody2D.IsStick = true;
+        //this.transform.SetParent(parent.transform);
+        //this.customRigidbody2D.Velocity = Vector2.zero;
+        //this.customRigidbody2D.IsStick = true;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {    
+        if (hit.gameObject.tag == GameObjectsTags.Wall)
+        {
+            customCharacterController.Stick(hit.normal);
+            Debug.Log("Stick Collision Controller !!!");
+        }
     }
     #endregion
 }
