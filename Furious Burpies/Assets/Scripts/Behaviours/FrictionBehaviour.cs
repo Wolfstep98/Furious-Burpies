@@ -3,9 +3,10 @@ using UnityEngine;
 
 public interface IFrictionBehaviour
 {
-    void Friction(Vector2 frictionCoef);
+    void Friction(IFrictionProperty property);
 }
 
+/*
 public class FrictionBehaviour : MonoBehaviour, IFrictionBehaviour
 {
     #region Fields & Properties
@@ -49,4 +50,4 @@ public class FrictionBehaviour : MonoBehaviour, IFrictionBehaviour
 
     #endregion
 
-}
+}*/

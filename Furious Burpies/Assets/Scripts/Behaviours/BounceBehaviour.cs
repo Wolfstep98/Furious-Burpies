@@ -3,9 +3,10 @@ using UnityEngine;
 
 public interface IBounceBehaviour
 {
-    void Bounce(Vector2 bounceCoef, Vector2 normal);
+    void Bounce(IBounceProperty property);
 }
 
+/*
 [RequireComponent(typeof(Rigidbody2D))]
 public class BounceBehaviour : MonoBehaviour, IBounceBehaviour
 {
@@ -78,4 +79,4 @@ public class BounceBehaviour : MonoBehaviour, IBounceBehaviour
         Debug.Log("vector : " + vel + " | result : " + result);
     }
     #endregion
-}
+}*/

@@ -2,9 +2,10 @@
 
 public interface IStickBehaviour
 {
-    void Stick(Vector3 hitNormal);
+    void Stick(IStickProperty property);
 }
 
+/*
 public class StickBehaviour : MonoBehaviour, IStickBehaviour
 {
     #region Fields & Properties
@@ -40,4 +41,4 @@ public class StickBehaviour : MonoBehaviour, IStickBehaviour
         }
     }
     #endregion
-}
+}*/

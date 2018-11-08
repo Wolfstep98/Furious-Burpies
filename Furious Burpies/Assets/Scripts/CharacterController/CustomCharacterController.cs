@@ -59,6 +59,8 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     [Header("Collisions")]
     [SerializeField]
     private int collisionLayerMask = 0;
+    [SerializeField]
+    private Vector2 normalHit = Vector2.zero;
 
     [Header("RoofChecker")]
     [SerializeField]
@@ -85,11 +87,20 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     private Vector3 direction = Vector3.zero;
     public Vector3 Direction { get { return this.direction; } }
 
+    [Header("Bounce Behaviour")]
+    [SerializeField]
+    private float bounceThreshold = 0.5f;
+
     [Header("Stick behaviour")]
     [SerializeField]
     private float stickTime = 0.0f;
     [SerializeField]
     private float stickBehaviourTime = 1.5f;
+
+
+    [Header("Friction behaviour")]
+    [SerializeField]
+    private float frictionThreshold = 0.5f;
 
     [Header("References")]
     [SerializeField]
@@ -121,15 +132,18 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     {
         //Test Better Behaviour
 
+        //Check Behaviours
+        this.UpdateStick();
+
         //Check Collisions
         this.DetectRoof();
         this.DetectGround();
 
         this.UpdateGravity();
 
-        Vector3 finalDirection = this.direction + this.gravityApplied;
+        this.finalDirection = this.direction + this.gravityApplied;
         this.finalDirection.z = 0.0f;
-        this.characterController.Move(finalDirection * GameTime.deltaTime);
+        this.characterController.Move(this.finalDirection * GameTime.deltaTime);
     }
     #endregion
 
@@ -142,35 +156,82 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
             if (Physics.SphereCast(this.transform.position, this.roofCheckerRadius, Vector3.up, out info, Math.Abs(this.roofCheckerPosition.y), this.collisionLayerMask))
             {
                 Debug.Log("Roof Detected");
-                this.direction.y = 0.0f;
+                this.OnCollision(info.collider.gameObject);
             }
         }
     }
 
     private void DetectGround()
     {
-        //if(!this.isGrounded)
-        { 
-            RaycastHit info;
-            if (Physics.SphereCast(this.transform.position, this.groundCheckerRadius, Vector3.down, out info, Math.Abs(this.groundCheckerPosition.y), this.collisionLayerMask))
-            {
-                if (Mathf.RoundToInt(info.normal.y) == 1)
-                {
-                    Debug.Log("Ground Detected");
-                    this.isGrounded = true;
-                }
-            }
-            else
-            {
-                this.isGrounded = false;
-            }
+        RaycastHit info;
+        if (Physics.SphereCast(this.transform.position, this.groundCheckerRadius, Vector3.down, out info, Math.Abs(this.groundCheckerPosition.y), this.collisionLayerMask))
+        {
+            this.normalHit = info.normal;
+            this.OnCollision(info.collider.gameObject);
+        }
+        else
+        {
+            this.isGrounded = false;
         }
     }
+
+    private void OnCollision(GameObject obj)
+    {
+        IStickProperty stickProperty = obj.GetComponent<IStickProperty>();
+        IBounceProperty bounceProperty = obj.GetComponent<IBounceProperty>();
+        IFrictionProperty frictionProperty = obj.GetComponent<IFrictionProperty>();
+        if (Math.Abs(Vector3.Angle(this.normalHit, this.finalDirection)) > 90.0f)
+        {
+            if (bounceProperty != null && !this.isGrounded)
+            {
+                Debug.Log("Bounce");
+                this.Bounce(bounceProperty);
+            }
+            else if (stickProperty != null && !this.isGrounded && !this.isStick)
+            {
+                Debug.Log("Stick");
+                this.Stick(stickProperty);
+            }
+        }
+        else if (frictionProperty != null && this.direction != Vector3.zero)
+        {
+            Debug.Log("Friction");
+            this.Friction(frictionProperty);
+        }
+        
+    }
+
+    //private void OnControllerColliderHit(ControllerColliderHit hit)
+    //{
+    //    Debug.Log("Collison with Character Controller");
+    //    GameObject obj = hit.collider.gameObject;
+    //    this.normalHit = hit.normal;
+
+    //    IStickProperty stickProperty = obj.GetComponent<IStickProperty>();
+    //    IBounceProperty bounceProperty = obj.GetComponent<IBounceProperty>();
+    //    IFrictionProperty frictionProperty = obj.GetComponent<IFrictionProperty>();
+
+    //    if(bounceProperty != null)
+    //    {
+    //        Debug.Log("Bounce");
+    //        this.Bounce(bounceProperty);
+    //    }
+    //    else if (stickProperty != null)
+    //    {
+    //        Debug.Log("Stick");
+    //        this.Stick(stickProperty);
+    //    }
+    //    else if(frictionProperty != null)
+    //    {
+    //        Debug.Log("Friction");
+    //        this.Friction(frictionProperty);
+    //    }
+    //}
     #endregion
 
     private void UpdateGravity()
     {
-        if (!this.gravityEnabled)
+        if (!this.gravityEnabled || this.isStick)
             return;
 
         if(!this.isGrounded && !this.isStick)
@@ -188,40 +249,117 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
         }
     }
 
-    public void Bounce(Vector2 frictionCoef, Vector2 normal)
-    {
-        //Vector2 vel = this.characterController.velocity;
-
-        //Vector2 result = vel - (2 * (Vector2.Dot(vel, normal)) * normal);
-
-        //result *= frictionCoef;
-
-        //this.characterController.Move(result);
-
-        //Debug.Log("vector : " + vel + " | result : " + result);
-    }
-
     public void UpdateDirection(Vector3 direction, float forceApplied)
     {
         this.direction = direction * forceApplied;
     }
 
-    public void Stick(Vector3 hitNormal)
+    #region Behaviours
+    public void Bounce(IBounceProperty property)
     {
-        int normalX = Mathf.RoundToInt(hitNormal.x);
-        int normalY = Mathf.RoundToInt(hitNormal.y);
-        
-        if(Math.Abs(normalX) == 1 || normalY == -1)
+        if (property.IsEnabled)
         {
-            this.isStick = true;
-        }
-        if(normalY == 1)
-        {
-            this.isGrounded = true;
-        }
+            Vector2 vel = this.finalDirection;
 
-        this.direction = Vector3.zero;
+            Vector2 result = vel - (2 * (Vector2.Dot(vel, this.normalHit)) * this.normalHit);
+
+            if (Math.Abs(result.y) < this.bounceThreshold)
+            {
+                result.y = 0.0f;
+                this.isGrounded = true;
+            }
+            else
+            {
+                this.isGrounded = false;
+            }
+            if (Math.Abs(result.x) < this.bounceThreshold)
+            {
+                result.x = 0.0f;
+            }
+
+            result *= property.BounceCoef;
+
+            this.direction = result;
+            this.gravityApplied = Vector3.zero;
+            
+            Debug.Log("vector : " + vel + " | result : " + result);
+        }
     }
+
+    public void Stick(IStickProperty property)
+    {
+        if (property.IsEnable)
+        {
+            int normalX = Mathf.RoundToInt(this.normalHit.x);
+            int normalY = Mathf.RoundToInt(this.normalHit.y);
+
+            if (Math.Abs(normalX) == 1 || normalY == -1)
+            {
+                this.isStick = true;
+            }
+            if (normalY == 1)
+            {
+                this.isGrounded = true;
+            }
+
+            this.direction = Vector3.zero;
+        }
+    }
+
+    public void Friction(IFrictionProperty property)
+    {
+        if(Math.Abs(this.direction.x) > 0.0f)
+        {
+            if (this.direction.x > 0)
+                this.direction.x -= (property.FrictionCoef.x * GameTime.deltaTime);
+            else
+                this.direction.x += (property.FrictionCoef.x * GameTime.deltaTime);
+
+            if (Mathf.Abs(this.direction.x) < this.frictionThreshold)
+                this.direction.x = 0.0f;
+        }
+    }
+    #endregion
+
+    //public void Bounce(Vector2 frictionCoef, Vector2 normal)
+    //{
+    //    Vector2 vel = this.finalDirection;
+
+    //    Vector2 result = vel - (2 * (Vector2.Dot(vel, normal)) * normal);
+
+    //    result *= frictionCoef;
+
+    //    if (result.y < 1.0f)
+    //    {
+    //        result.y = 0.0f;
+    //    }
+    //    else
+    //    {
+    //        this.direction = result;
+    //        this.gravityApplied = Vector3.zero;
+    //        this.isGrounded = false;
+    //    }
+
+    //    Debug.Log("vector : " + vel + " | result : " + result);
+    //}
+
+
+    //public void Stick(Vector3 hitNormal)
+    //{
+    //    int normalX = Mathf.RoundToInt(hitNormal.x);
+    //    int normalY = Mathf.RoundToInt(hitNormal.y);
+
+    //    if(Math.Abs(normalX) == 1 || normalY == -1)
+    //    {
+    //        this.isStick = true;
+    //    }
+    //    if(normalY == 1)
+    //    {
+    //        this.isGrounded = true;
+    //    }
+
+    //    this.direction = Vector3.zero;
+    //}
 
     private void UpdateStick()
     {
@@ -234,10 +372,6 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
                 this.stickTime = 0.0f;
             }
         }
-    }
-    public void Friction(Vector2 frictionCoef)
-    {
-        throw new NotImplementedException();
     }
 
     public void CatapultFromGround()

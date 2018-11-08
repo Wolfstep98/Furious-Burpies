@@ -187,7 +187,7 @@ public class TerrainGeneration : MonoBehaviour
             for (int c = 0; c < parent.childCount;c++)
             {
                 StickProperty property = parent.GetChild(c).GetComponent<StickProperty>();
-                property.IsEnable = !property.IsEnable;
+                //property.IsEnable = !property.IsEnable;
             }
         }
     }
