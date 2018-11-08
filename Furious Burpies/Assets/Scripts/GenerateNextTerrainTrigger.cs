@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Collider))]
 public class GenerateNextTerrainTrigger : MonoBehaviour
 {
     #region Fields & Properties
@@ -16,10 +16,11 @@ public class GenerateNextTerrainTrigger : MonoBehaviour
             this.terrainGeneration = GameObject.Find("TerrainGeneration").GetComponent<TerrainGeneration>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
         if(collision.tag == GameObjectsTags.Player)
         {
+            Debug.Log("Generate Terrain");
             this.terrainGeneration.GenerateBasicTerrain();
             this.gameObject.SetActive(false);
         }

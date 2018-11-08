@@ -22,7 +22,7 @@ public class TerrainGeneration : MonoBehaviour
     [SerializeField]
     private GameObject[] spawnerPrefabs = new GameObject[0];
     [SerializeField]
-    private GameObject[] basicPrefabs = new GameObject[0];
+    private TerrainData[] basicTerrainData = new TerrainData[0];
 
     [Header("Spawns", order = 1)]
     [SerializeField]
@@ -57,7 +57,7 @@ public class TerrainGeneration : MonoBehaviour
 
         if (this.spawnerPrefabs.Length == 0)
             Debug.LogError("[Missing Terrain GameObjects] - spawnerPrefabs list is empty, put at least 1 spawner prefab !");
-        if (this.basicPrefabs.Length == 0)
+        if (this.basicTerrainData.Length == 0)
             Debug.LogError("[Missing Terrain GameObjects] - basicPrefabs list is empty, put at least 1 basic prefab !");
 
         if (this.player == null)
@@ -79,10 +79,10 @@ public class TerrainGeneration : MonoBehaviour
             this.spawners[i] = terrain;
         }
 
-        this.basics = new GameObject[this.basicPrefabs.Length];
+        this.basics = new GameObject[this.basicTerrainData.Length];
         for (int i = 0; i < this.basics.Length; i++)
         {
-            GameObject terrain = Instantiate<GameObject>(this.basicPrefabs[i], Vector3.zero, Quaternion.identity, this.terrainsParent);
+            GameObject terrain = Instantiate<GameObject>(this.basicTerrainData[i].Prefab, Vector3.zero, Quaternion.identity, this.terrainsParent);
             terrain.SetActive(false);
             this.basics[i] = terrain;
         }
