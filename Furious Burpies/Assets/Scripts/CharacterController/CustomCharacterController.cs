@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounceBehaviour, IFrictionBehaviour
+public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounceBehaviour, IFrictionBehaviour, ISlipBehaviour
 {
     #region Fields & Properties
     [Header("States")]
@@ -19,6 +19,13 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     /// Is the character stick ?
     /// </summary>
     public bool IsStick { get { return this.isStick; } }
+
+    [SerializeField]
+    private bool isSlip = false;
+    /// <summary>
+    /// Is the character spliping ?
+    /// </summary>
+    public bool IsSlip { get { return this.isSlip; } }
 
     [Header("Gravity")]
     [SerializeField]
@@ -58,9 +65,19 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
 
     [Header("Collisions")]
     [SerializeField]
+    private bool showCollisions = true;
+    [SerializeField]
+    private bool showHitbox = true;
+    [SerializeField]
     private int collisionLayerMask = 0;
     [SerializeField]
+    private float hitboxRadius = 0.0f;
+    [SerializeField]
+    private Vector3 hitboxPosition = Vector2.zero;
+    [SerializeField]
     private Vector2 normalHit = Vector2.zero;
+    [SerializeField]
+    private Vector3 hitPoint = Vector3.zero;
 
     [Header("RoofChecker")]
     [SerializeField]
@@ -79,6 +96,8 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     private Vector3 groundCheckerPosition = Vector3.zero;
 
     [Header("Velocity")]
+    [SerializeField]
+    private bool showVelocity = true;
     [SerializeField]
     private Vector3 finalDirection = Vector3.zero;
     public Vector3 FinalDirection { get { return this.finalDirection; } }
@@ -101,6 +120,9 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     [Header("Friction behaviour")]
     [SerializeField]
     private float frictionThreshold = 0.5f;
+
+    [Header("Slip Behaviour")]
+
 
     [Header("References")]
     [SerializeField]
@@ -130,19 +152,31 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     #region MonoBehaviour
     public void CustomUpdate()
     {
+
+    }
+
+    public void CustomFixedUpdate()
+    {
         //Test Better Behaviour
 
         //Check Behaviours
         this.UpdateStick();
 
         //Check Collisions
-        this.DetectRoof();
+        //this.DetectCollisions();
+        //this.DetectRoof();
         this.DetectGround();
 
         this.UpdateGravity();
 
         this.finalDirection = this.direction + this.gravityApplied;
         this.finalDirection.z = 0.0f;
+        if (this.transform.position.z != 0.0f)
+        {
+            Vector3 position = this.transform.position;
+            position.z = 0.0f;
+            this.transform.position = position;
+        }
         this.characterController.Move(this.finalDirection * GameTime.deltaTime);
     }
     #endregion
@@ -163,26 +197,70 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
 
     private void DetectGround()
     {
-        RaycastHit info;
-        if (Physics.SphereCast(this.transform.position, this.groundCheckerRadius, Vector3.down, out info, Math.Abs(this.groundCheckerPosition.y), this.collisionLayerMask))
+        if (this.IsGrounded)
         {
-            this.normalHit = info.normal;
-            this.OnCollision(info.collider.gameObject);
+            RaycastHit info;
+            if (Physics.Raycast(this.transform.position, ((this.transform.position + this.groundCheckerPosition) - this.transform.position).normalized, out info, Math.Abs(this.groundCheckerPosition.y), this.collisionLayerMask))
+            {
+                //this.normalHit = info.normal;
+                //this.OnCollision(info.collider.gameObject);
+                Debug.Log("Is grounded");
+            }
+            else
+            {
+                Debug.Log("Isn't grounded");
+                this.isGrounded = false;
+            }
         }
-        else
+    }
+
+    private void DetectCollisions()
+    {
+        //RaycastHit infos;
+        //if (Physics.SphereCast(this.transform.position, this.hitboxRadius, Vector3.zero, out infos, 0.5f, this.collisionLayerMask))
+        //{
+        //    Debug.Log("SphereCast collision");
+        //    this.normalHit = infos.normal;
+        //    this.OnCollision(infos.collider.gameObject);
+        //}
+        //Collider[] colliders = Physics.OverlapSphere(this.transform.position + this.hitboxPosition, this.hitboxRadius, this.collisionLayerMask);
+        //if(colliders != null && colliders.Length > 0)
+        //{
+        //    Debug.Log("OverlapSphere collision");
+        //    this.OnCollision(colliders[0].gameObject);
+        //}
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.Log("Collison with Character Controller : " + hit.collider.name);
+
+        if (this.showCollisions)
         {
-            this.isGrounded = false;
+            Debug.DrawRay(hit.point, hit.normal, Color.black, 10.0f);
+            Debug.DrawRay(this.transform.position, this.finalDirection, Color.blue, 10.0f);
         }
+
+        GameObject obj = hit.collider.gameObject;
+        this.normalHit = hit.normal;
+        this.hitPoint = hit.point;
+
+        this.OnCollision(obj);
     }
 
     private void OnCollision(GameObject obj)
     {
+        Debug.Log("Checking collisions");
+
+        //Get the component of the object we collided
         IStickProperty stickProperty = obj.GetComponent<IStickProperty>();
         IBounceProperty bounceProperty = obj.GetComponent<IBounceProperty>();
         IFrictionProperty frictionProperty = obj.GetComponent<IFrictionProperty>();
+        ISlipProperty slipProperty = obj.GetComponent<ISlipProperty>();
+
         if (Math.Abs(Vector3.Angle(this.normalHit, this.finalDirection)) > 90.0f)
         {
-            if (bounceProperty != null && !this.isGrounded)
+            if (bounceProperty != null)
             {
                 Debug.Log("Bounce");
                 this.Bounce(bounceProperty);
@@ -198,40 +276,18 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
             Debug.Log("Friction");
             this.Friction(frictionProperty);
         }
-        
+        if(slipProperty != null && !this.isSlip)
+        {
+            Debug.Log("Slip");
+            this.Slip(slipProperty);
+        }
     }
 
-    //private void OnControllerColliderHit(ControllerColliderHit hit)
-    //{
-    //    Debug.Log("Collison with Character Controller");
-    //    GameObject obj = hit.collider.gameObject;
-    //    this.normalHit = hit.normal;
-
-    //    IStickProperty stickProperty = obj.GetComponent<IStickProperty>();
-    //    IBounceProperty bounceProperty = obj.GetComponent<IBounceProperty>();
-    //    IFrictionProperty frictionProperty = obj.GetComponent<IFrictionProperty>();
-
-    //    if(bounceProperty != null)
-    //    {
-    //        Debug.Log("Bounce");
-    //        this.Bounce(bounceProperty);
-    //    }
-    //    else if (stickProperty != null)
-    //    {
-    //        Debug.Log("Stick");
-    //        this.Stick(stickProperty);
-    //    }
-    //    else if(frictionProperty != null)
-    //    {
-    //        Debug.Log("Friction");
-    //        this.Friction(frictionProperty);
-    //    }
-    //}
     #endregion
 
     private void UpdateGravity()
     {
-        if (!this.gravityEnabled || this.isStick)
+        if (!this.gravityEnabled)
             return;
 
         if(!this.isGrounded && !this.isStick)
@@ -295,13 +351,21 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
 
             if (Math.Abs(normalX) == 1 || normalY == -1)
             {
+                this.stickTime = 0.0f;
                 this.isStick = true;
             }
-            if (normalY == 1)
+            else if (normalY == 1)
             {
                 this.isGrounded = true;
             }
+            else
+            {
+                this.stickTime = 0.0f;
+                this.isStick = true;
+            }
 
+            //Vector3 offset = (this.transform.position - this.hitPoint);
+            //this.transform.position = this.hitPoint + offset;
             this.direction = Vector3.zero;
         }
     }
@@ -319,6 +383,29 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
                 this.direction.x = 0.0f;
         }
     }
+
+    public void Slip(ISlipProperty property)
+    {
+        //CalculateNewDirection
+        float angle = Vector3.Angle(this.normalHit, this.finalDirection);
+        Vector3 A = Vector3.zero;
+        Vector3 B = this.normalHit;
+        Vector3 M = this.finalDirection;
+        float value = ((B.x - A.x) * (M.y - A.y) - (B.y - A.y) * (M.x - A.x)); // -1 is on the right, 1 is on the left, 0 is on the line.
+        float sign = 0;
+        if (value > 0)
+            sign = 1;
+        else
+            sign = -1;
+        Vector3 nextDirection = Vector3.Cross(this.normalHit, Vector3.forward).normalized * -sign;
+        Debug.Log("Angle : " + angle + " | sign : " + sign + " | nextDirection : " + nextDirection);
+        Debug.DrawRay(this.transform.position, nextDirection,Color.gray);
+        this.direction = nextDirection * Math.Abs(this.finalDirection.x);
+        this.gravityApplied.y = 0.0f;
+        this.isGrounded = true;
+        //this.isSlip = true;
+    }
+
     #endregion
 
     //public void Bounce(Vector2 frictionCoef, Vector2 normal)
@@ -400,9 +487,27 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
         if (this.showGroundCheckerDebug)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(this.transform.position + this.groundCheckerPosition, this.groundCheckerRadius);
+            Gizmos.DrawRay(this.transform.position, (this.transform.position + this.groundCheckerPosition) - this.transform.position);
+            //Gizmos.DrawWireSphere(this.transform.position + this.groundCheckerPosition, this.groundCheckerRadius);
+        }
+
+        //Hitbox
+        if (this.showHitbox)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(this.transform.position + this.hitboxPosition, this.hitboxRadius);
+        }
+
+        //Velocity
+        if(this.showVelocity)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(this.transform.position, Vector3.right * this.finalDirection.x);
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(this.transform.position, Vector3.up * this.finalDirection.y);
         }
     }
+
     #endregion
     #endregion
 }

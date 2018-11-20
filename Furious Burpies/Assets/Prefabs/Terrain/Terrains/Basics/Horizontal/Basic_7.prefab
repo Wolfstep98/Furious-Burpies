@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 4907567424508222}
   - component: {fileID: 212994895208412438}
   - component: {fileID: 65840129465287112}
-  - component: {fileID: 114062670863063800}
+  - component: {fileID: 114832214600907946}
   m_Layer: 9
   m_Name: Cube 20x2
   m_TagString: Untagged
@@ -710,7 +710,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1630940242930598}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.5, z: 0}
+  m_LocalPosition: {x: 0, y: 5.4, z: 0}
   m_LocalScale: {x: 20, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4167420227992388}
@@ -839,18 +839,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114062670863063800
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1630940242930598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d684020a42cade49918776a25500807, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isEnabled: 1
 --- !u!114 &114336113519044254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -885,7 +873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d684020a42cade49918776a25500807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnabled: 1
+  isEnable: 1
 --- !u!114 &114515354994330626
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -897,13 +885,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d684020a42cade49918776a25500807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnabled: 1
+  isEnable: 1
 --- !u!114 &114799859059382994
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230963156631924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6336c542f00524428a8d23ab440d569, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isEnabled: 1
+  bounceCoef: {x: 1, y: 1}
+--- !u!114 &114832214600907946
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1630940242930598}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6336c542f00524428a8d23ab440d569, type: 3}
@@ -922,7 +923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d684020a42cade49918776a25500807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnabled: 1
+  isEnable: 1
 --- !u!212 &212391281766349462
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -1168,7 +1169,7 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9080e6658315e09419398382a28bf813, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

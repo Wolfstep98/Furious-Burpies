@@ -30,7 +30,7 @@ public class CustomCharacterControllerManager : MonoBehaviour
     }
 	#endregion
 	
-	void Update () 
+	private void Update () 
 	{
         //Inputs
         this.input.CustomUpdate();
@@ -38,5 +38,10 @@ public class CustomCharacterControllerManager : MonoBehaviour
         //Controller
         this.controller.CustomUpdate();
 	}
-	#endregion
+
+    private void FixedUpdate()
+    {
+        this.controller.CustomFixedUpdate();
+    }
+    #endregion
 }

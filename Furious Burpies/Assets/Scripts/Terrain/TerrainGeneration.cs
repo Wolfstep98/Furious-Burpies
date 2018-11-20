@@ -110,7 +110,7 @@ public class TerrainGeneration : MonoBehaviour
     public void GenerateBasicTerrain()
     {
         this.GenerateNextTerrain(TerrainType.Basic);
-        this.DisabledLastTerrain();
+        //this.DisabledLastTerrain();
         Debug.Log("[Succes] - Basic Terrain succesfully generated !");
     }
 
@@ -156,7 +156,7 @@ public class TerrainGeneration : MonoBehaviour
                 this.lastTerrainAdded = terrain;
                 break;
             case TerrainType.Basic:
-                terrain = this.basics[index];
+                terrain = Instantiate<GameObject>(this.basics[index]);
                 terrain.SetActive(true);
                 terrain.transform.Find("Trigger - GenerateNextTerrain").gameObject.SetActive(true);
                 Vector3 lastPos = this.lastTerrainAdded.transform.position;
@@ -164,7 +164,7 @@ public class TerrainGeneration : MonoBehaviour
                 Vector3 startPoint = terrain.transform.Find("StartPoint").transform.position;
                 Vector3 translation = endPoint - startPoint;
                 terrain.transform.Translate(translation, Space.World);
-                this.terrainQueue.Enqueue(this.basics[index]);
+                this.terrainQueue.Enqueue(terrain);
                 this.lastTerrainAdded = terrain;
                 break;
             default:

@@ -10,8 +10,8 @@ public class StickProperty : MonoBehaviour, IStickProperty
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
-    private bool isEnabled = true;
-    public bool IsEnable { get { return this.isEnabled; } }
+    private bool isEnable = true;
+    public bool IsEnable { get { return this.isEnable; } }
     #endregion
 
     #region Methods

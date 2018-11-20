@@ -6,6 +6,8 @@ public class CustomCameraController : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
+    private Axis axis = Axis.X;
+    [SerializeField]
     private Vector3 currentPosition = Vector3.zero;
     [SerializeField]
     private Vector3 offset = Vector3.zero;
@@ -38,9 +40,21 @@ public class CustomCameraController : MonoBehaviour
 
     public void UpdatePosition()
     {
-        Vector3 cameraPos = this.objToFollow.position;
-        cameraPos.y = 0.0f;
-        cameraPos.z = 0.0f;
+        Vector3 cameraPos = Vector3.zero;
+        switch(this.axis)
+        {
+            case Axis.X:
+                cameraPos = new Vector3(this.objToFollow.position.x, 0.0f, 0.0f);
+                break;
+            case Axis.Y:
+                cameraPos = new Vector3(0.0f, this.objToFollow.position.y, 0.0f);
+                break;
+            case Axis.Z:
+                cameraPos = new Vector3(0.0f, 0.0f, this.objToFollow.position.z);
+                break;
+            default:
+                break;
+        }
         this.currentPosition = cameraPos + offset;
     }
 	#endregion

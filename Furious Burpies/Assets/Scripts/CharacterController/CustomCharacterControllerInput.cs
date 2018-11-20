@@ -61,6 +61,8 @@ public class CustomCharacterControllerInput : MonoBehaviour
     [Header("Debug")]
     [SerializeField]
     private bool showDirection = true;
+    [SerializeField]
+    private bool showInputGamePosition = true;
     #endregion
 
     #region Methods
@@ -83,7 +85,8 @@ public class CustomCharacterControllerInput : MonoBehaviour
 
     private void Initiliaze()
     {
-        this.maxInputDistance = Screen.width / 4.0f;
+        //this.maxInputDistance = Screen.width / 4.0f;
+        this.maxInputDistance = Screen.height / 4.0f;
 
         this.trajectoryPrediction.Setup(-this.customCharacterController.GravityForce, this.customCharacterController.transform.position, Vector2.zero);
     }
@@ -126,6 +129,12 @@ public class CustomCharacterControllerInput : MonoBehaviour
             {
                 if (this.canCatapult)
                 {
+                    if (!this.customCharacterController.IsGrounded && !this.customCharacterController.IsStick)
+                    {
+                        Vector3 temp = this.customCharacterController.FinalDirection * GameTime.deltaTime;
+                        this.lockPos.x += temp.x;
+                    }
+
                     this.lastScreenPos = Input.mousePosition;
                     this.lastPos = this.mainCamera.ScreenToWorldPoint(Input.mousePosition);
                     this.distanceBetweenLockAndFinger = Vector2.Distance(this.screenLockPos, Input.mousePosition);
@@ -149,7 +158,23 @@ public class CustomCharacterControllerInput : MonoBehaviour
                     //Feedback trajectory
                     if (this.slowDownBehaviour.IsTimeSlowDown)
                     {
-                        this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                        if (this.customCharacterController.IsGrounded || this.customCharacterController.IsStick)
+                        {
+                            this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                            this.slowDownBehaviour.RevertSlowDown();
+                        }
+                        else
+                        {
+                            this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                        }
+                    }
+                    else
+                    {
+                        if(!this.customCharacterController.IsGrounded && !this.customCharacterController.IsStick)
+                        {
+                            this.slowDownBehaviour.SlowDown();
+                            this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                        }
                     }
                     this.predictedVelocity = direction;
                     this.trajectoryPrediction.InitialVelocity = this.predictedVelocity;
@@ -204,15 +229,16 @@ public class CustomCharacterControllerInput : MonoBehaviour
                 {
                     if (this.customCharacterController.IsGrounded || this.customCharacterController.IsStick)
                     {
-                        this.playerLocked = true;
                         this.screenLockPos = touch.position;
                         this.lockPos = this.mainCamera.ScreenToWorldPoint(touch.position);
                         this.distanceBetweenLockAndFinger = 0.0f;
+
                         this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+
+                        this.playerLocked = true;
                     }
                     else if (this.lifeProperty.Life > 0)
                     {
-                        this.playerLocked = true;
                         this.screenLockPos = touch.position;
                         this.lockPos = this.mainCamera.ScreenToWorldPoint(touch.position);
                         this.distanceBetweenLockAndFinger = 0.0f;
@@ -220,6 +246,7 @@ public class CustomCharacterControllerInput : MonoBehaviour
                         this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
 
                         this.slowDownBehaviour.SlowDown();
+                        this.playerLocked = true;
                     }
                     else
                     {
@@ -230,6 +257,12 @@ public class CustomCharacterControllerInput : MonoBehaviour
                 {
                     if (this.playerLocked)
                     {
+                        if (!this.customCharacterController.IsGrounded && !this.customCharacterController.IsStick)
+                        {
+                            Vector3 temp = this.customCharacterController.FinalDirection * GameTime.deltaTime;
+                            this.lockPos.x += temp.x;
+                        }
+
                         this.lastScreenPos = touch.position;
                         this.lastPos = this.mainCamera.ScreenToWorldPoint(touch.position);
                         this.distanceBetweenLockAndFinger = Vector2.Distance(this.screenLockPos, touch.position);
@@ -240,9 +273,9 @@ public class CustomCharacterControllerInput : MonoBehaviour
                         {
                             screenDirection.Normalize();
                             screenDirection *= this.maxInputDistance;
+                            this.lastScreenPos = this.screenLockPos + screenDirection;
+                            this.lastPos = mainCamera.ScreenToWorldPoint(this.lastScreenPos);
                         }
-                        this.lastScreenPos = this.screenLockPos + screenDirection;
-                        this.lastPos = mainCamera.ScreenToWorldPoint(this.lastScreenPos);
 
                         Vector2 direction = (this.lockPos - this.lastPos) * this.velocityMultiplicator;
                         if (this.showDirection)
@@ -253,8 +286,25 @@ public class CustomCharacterControllerInput : MonoBehaviour
                         //Feedback trajectory
                         if (this.slowDownBehaviour.IsTimeSlowDown)
                         {
-                            this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                            if (this.customCharacterController.IsGrounded || this.customCharacterController.IsStick)
+                            {
+                                this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                                this.slowDownBehaviour.RevertSlowDown();
+                            }
+                            else
+                            {
+                                this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                            }
                         }
+                        else
+                        {
+                            if (!this.customCharacterController.IsGrounded && !this.customCharacterController.IsStick)
+                            {
+                                this.slowDownBehaviour.SlowDown();
+                                this.trajectoryPrediction.InitialPosition = this.customCharacterController.transform.position;
+                            }
+                        }
+
                         this.predictedVelocity = direction;
                         this.trajectoryPrediction.InitialVelocity = this.predictedVelocity;
                         this.showTrajectory.ShowTrajectoryPrediction();
@@ -288,7 +338,7 @@ public class CustomCharacterControllerInput : MonoBehaviour
                     this.lastScreenPos = this.screenLockPos + screenDirection;
                     this.lastPos = mainCamera.ScreenToWorldPoint(this.lastScreenPos);
 
-                    Vector2 direction = (this.lockPos - this.lastPos) * this.velocityMultiplicator;
+                    Vector2 direction = (this.lockPos - this.lastPos); //* this.velocityMultiplicator;
                     //this.player.GetComponent<Rigidbody2D>().AddForce(direction * 50, ForceMode2D.Force);
                     //this.player.GetComponent<CustomRigidbody2D>().Velocity = direction;
                     this.customCharacterController.UpdateDirection(direction, this.velocityMultiplicator);
@@ -317,6 +367,15 @@ public class CustomCharacterControllerInput : MonoBehaviour
     public void ChangeVelocityMultiplicator(float value)
     {
         this.velocityMultiplicator = value;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (this.showInputGamePosition)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(this.lockPos, this.lastPos);
+        }
     }
     #endregion
 }
