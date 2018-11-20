@@ -28,7 +28,7 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
 
     [Header("References")]
     [SerializeField]
-    new private Rigidbody2D rigidbody2D = null;
+    new private Rigidbody rigidbody = null;
     #endregion
 
     #region Methods
@@ -56,6 +56,7 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
             //this.rigidbody2D.velocity = vel;
 
             GameTime.timeScale = this.timeSlowDown;
+            Time.timeScale = this.timeSlowDown;
         }
         else
         {
@@ -76,6 +77,7 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
             this.isTimeSlowDown = false;
 
             GameTime.timeScale = 1.0f;
+            Time.timeScale = 1.0f;
         }
         else
         {

@@ -113,8 +113,10 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     [Header("Stick behaviour")]
     [SerializeField]
     private float stickTime = 0.0f;
+    public float StickTimer { get { return this.stickTime; } }
     [SerializeField]
     private float stickBehaviourTime = 1.5f;
+    public float MaxStickTime { get { return this.stickBehaviourTime; } }
 
 
     [Header("Friction behaviour")]
@@ -506,6 +508,21 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
             Gizmos.color = Color.green;
             Gizmos.DrawRay(this.transform.position, Vector3.up * this.finalDirection.y);
         }
+    }
+
+    public void Stick(Collision collision, IStickProperty property)
+    {
+        throw new NotImplementedException();
+    }
+
+    void IStickBehaviour.UpdateStick()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ResetStick()
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

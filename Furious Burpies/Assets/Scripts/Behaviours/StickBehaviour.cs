@@ -2,7 +2,13 @@
 
 public interface IStickBehaviour
 {
-    void Stick(IStickProperty property);
+    bool IsStick { get; }
+    float StickTimer { get; }
+    float MaxStickTime { get; }
+
+    void Stick(Collision collision, IStickProperty property);
+    void UpdateStick();
+    void ResetStick();
 }
 
 /*
