@@ -8,6 +8,7 @@ public class TrajectoryPrediction : MonoBehaviour
     [Header("Parameters")]
     [SerializeField]
     private float gravity = -9.81f;
+    public float Gravity { set { this.gravity = value; } }
 
     [SerializeField]
     private Vector2 initialPosition = Vector2.zero;

@@ -81,7 +81,7 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
         }
         else
         {
-            Debug.LogError("The behaviour slowdown is already inactive !");
+            Debug.LogWarning("The behaviour slowdown is already inactive !");
         }
     }
     #endregion

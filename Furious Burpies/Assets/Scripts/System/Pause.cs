@@ -10,7 +10,7 @@ public class Pause : MonoBehaviour
 
     [Header("References")]
     [SerializeField]
-    private CatapultInput catapultInput = null;
+    private CustomRigidbodyInput customRigidbodyInput = null;
 
     [Header("UI")]
     [SerializeField]
@@ -19,22 +19,22 @@ public class Pause : MonoBehaviour
 
     public void PauseGame()
     {
-        this.catapultInput.Cancel();
-        this.catapultInput.InputEnabled = false;
 
         this.panelPause.SetActive(true);
 
-        GameTime.timeScale = 0.0f;
+        this.customRigidbodyInput.Cancel();
+
+        Time.timeScale = 0.0f;
         this.isPaused = true;
     }
 
     public void UnPauseGame()
     {
-        GameTime.timeScale = 1.0f;
-        this.catapultInput.Cancel();
-        this.catapultInput.InputEnabled = true;
+        Time.timeScale = 1.0f;
 
         this.panelPause.SetActive(false);
+
+        this.customRigidbodyInput.Cancel();
 
         this.isPaused = false;
     }

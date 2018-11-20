@@ -381,6 +381,21 @@ public class CustomRigidbodyInput : MonoBehaviour
     }
     #endregion
 
+    #region UI
+    public void UpdateVelocityMultiplicator(float value)
+    {
+        this.velocityMultiplicator = value;
+    }
+
+    public void UpdateGravity(float value)
+    {
+        Vector3 gravity = Physics.gravity;
+        gravity.y = value;
+        Physics.gravity = gravity;
+        this.trajectoryPrediction.Gravity = gravity.y;
+    }
+    #endregion
+
     #region Debug
     private void OnDrawGizmosSelected()
     {
