@@ -7,8 +7,11 @@ public class TerrainData
     #region Fields & Properties
     [Header("Data")]
     [SerializeField]
-    private GameObject prefab;
+    private GameObject prefab = null;
     public GameObject Prefab { get { return this.prefab; } }
+    [SerializeField]
+    private Transform[] powerUpSpawns = null;
+    public Transform[] PowerUpSpawns { get { return this.powerUpSpawns; } }
 
     [Header("Platform Start Transition")]
     [SerializeField]

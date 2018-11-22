@@ -13,6 +13,9 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
+    private bool isEnable = true;
+
+    [SerializeField]
     private bool isTimeSlowDown = false;
     public bool IsTimeSlowDown { get { return this.isTimeSlowDown; } }
 
@@ -39,50 +42,61 @@ public class SlowDownBehaviour : MonoBehaviour, ISlownDownBehaviour
 
     public void SlowDown(float timeSlowDown)
     {
-        if (!this.isTimeSlowDown)
+        if (this.isEnable)
         {
-            this.isTimeSlowDown = true;
-            this.timeSlowDown = timeSlowDown;
-            //this.lastGravityScale = this.rigidbody2D.gravityScale;
-            //this.lastMass = this.rigidbody2D.mass;
+            if (!this.isTimeSlowDown)
+            {
+                this.isTimeSlowDown = true;
+                this.timeSlowDown = timeSlowDown;
+                //this.lastGravityScale = this.rigidbody2D.gravityScale;
+                //this.lastMass = this.rigidbody2D.mass;
 
-            //Vector2 vel = this.rigidbody2D.velocity;
-            //vel *= timeSlowDown;
+                //Vector2 vel = this.rigidbody2D.velocity;
+                //vel *= timeSlowDown;
 
-            //Debug.Log("Slow down : " + this.rigidbody2D.velocity + " => " + vel);
+                //Debug.Log("Slow down : " + this.rigidbody2D.velocity + " => " + vel);
 
-            //this.rigidbody2D.gravityScale = timeSlowDown;
-            //this.rigidbody2D.mass = this.lastMass * timeSlowDown;
-            //this.rigidbody2D.velocity = vel;
+                //this.rigidbody2D.gravityScale = timeSlowDown;
+                //this.rigidbody2D.mass = this.lastMass * timeSlowDown;
+                //this.rigidbody2D.velocity = vel;
 
-            GameTime.timeScale = this.timeSlowDown;
-            Time.timeScale = this.timeSlowDown;
-        }
-        else
-        {
-            Debug.LogError("The behaviour slowdown is already active !");
+                GameTime.timeScale = this.timeSlowDown;
+                Time.timeScale = this.timeSlowDown;
+            }
+            else
+            {
+                Debug.LogError("The behaviour slowdown is already active !");
+            }
         }
     }
 
     public void RevertSlowDown()
     {
-        if (this.isTimeSlowDown)
+        if (this.isEnable)
         {
-            //Vector2 vel = this.rigidbody2D.velocity;
-            //vel /= this.timeSlowDown;
+            if (this.isTimeSlowDown)
+            {
+                //Vector2 vel = this.rigidbody2D.velocity;
+                //vel /= this.timeSlowDown;
 
-            //this.rigidbody2D.mass = this.lastMass;
-            //this.rigidbody2D.gravityScale = this.lastGravityScale;
-            //this.rigidbody2D.velocity = vel;
-            this.isTimeSlowDown = false;
+                //this.rigidbody2D.mass = this.lastMass;
+                //this.rigidbody2D.gravityScale = this.lastGravityScale;
+                //this.rigidbody2D.velocity = vel;
+                this.isTimeSlowDown = false;
 
-            GameTime.timeScale = 1.0f;
-            Time.timeScale = 1.0f;
+                GameTime.timeScale = 1.0f;
+                Time.timeScale = 1.0f;
+            }
+            else
+            {
+                Debug.LogWarning("The behaviour slowdown is already inactive !");
+            }
         }
-        else
-        {
-            Debug.LogWarning("The behaviour slowdown is already inactive !");
-        }
+    }
+
+    public void UpdateEnable(bool value)
+    {
+        this.isEnable = value;
     }
     #endregion
 }

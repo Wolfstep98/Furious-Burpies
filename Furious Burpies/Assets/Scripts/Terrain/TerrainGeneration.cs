@@ -15,6 +15,10 @@ public class TerrainGeneration : MonoBehaviour
     private bool randomSeed = false;
     [SerializeField]
     private int seed = 42;
+    [SerializeField]
+    private int nbrOfTerrainSpawned = 0;
+    [SerializeField]
+    private int currentTerrainIndex = 0;
 
     [Header("Terrains")]
     [SerializeField]
@@ -42,6 +46,8 @@ public class TerrainGeneration : MonoBehaviour
     [Header("References")]
     [SerializeField]
     private GameObject player = null;
+    [SerializeField]
+    private PowerUpManager powerUpManager = null;
     #endregion
 
     #region Methods
@@ -65,6 +71,9 @@ public class TerrainGeneration : MonoBehaviour
         if (this.player == null)
             Debug.LogError("[Missing Reference] - player is missing !");
 #endif
+
+        this.nbrOfTerrainSpawned = 0;
+
         this.InstanciateTerrains();
         this.InitiliazeProcedural();
 
@@ -133,6 +142,17 @@ public class TerrainGeneration : MonoBehaviour
                 break;
         }
         this.EnableNextTerrain(type, index);
+        if(this.nbrOfTerrainSpawned % 3 == 0 && this.nbrOfTerrainSpawned != 0)
+        {
+            this.GeneratePowerUp();
+        }
+    }
+
+    private void GeneratePowerUp()
+    {
+        int indexRandomPosition = Random.Range(0, this.basicTerrainData[this.currentTerrainIndex].PowerUpSpawns.Length);
+        int indexRandomPowerUp = Random.Range(0, this.powerUpManager.PowerUpPrefabs.Length);
+        Instantiate<GameObject>(this.powerUpManager.PowerUpPrefabs[indexRandomPowerUp], this.lastTerrainAdded.transform.position + this.basicTerrainData[this.currentTerrainIndex].PowerUpSpawns[indexRandomPosition].position, Quaternion.identity);
     }
 
     private int PickRandomAvailableBasicTerrain()
@@ -152,13 +172,16 @@ public class TerrainGeneration : MonoBehaviour
         switch(type)
         {
             case TerrainType.Spawner:
+                this.currentTerrainIndex = index;
                 terrain = this.spawners[index];
                 terrain.SetActive(true);
                 terrain.transform.position = Vector3.zero;
                 this.terrainQueue.Enqueue(terrain);
                 this.lastTerrainAdded = terrain;
+                this.nbrOfTerrainSpawned++;
                 break;
             case TerrainType.Basic:
+                this.currentTerrainIndex = index;
                 terrain = Instantiate<GameObject>(this.basics[index]);
                 terrain.SetActive(true);
                 terrain.transform.Find("Trigger - GenerateNextTerrain").gameObject.SetActive(true);
@@ -169,6 +192,7 @@ public class TerrainGeneration : MonoBehaviour
                 terrain.transform.Translate(translation, Space.World);
                 this.terrainQueue.Enqueue(terrain);
                 this.lastTerrainAdded = terrain;
+                this.nbrOfTerrainSpawned++;
                 break;
             default:
                 Debug.LogError("[Argument Exception] - The terrain type is not recognized.");
@@ -182,17 +206,17 @@ public class TerrainGeneration : MonoBehaviour
         lastTerrain.SetActive(false);
     }
 
-    public void ToggleBounce()
-    {
-        for (int i = 0; i < this.basics.Length; i++)
-        {
-            Transform parent = this.basics[i].transform.Find("Platforms");
-            for (int c = 0; c < parent.childCount;c++)
-            {
-                StickProperty property = parent.GetChild(c).GetComponent<StickProperty>();
-                //property.IsEnable = !property.IsEnable;
-            }
-        }
-    }
+    //public void ToggleBounce()
+    //{
+    //    for (int i = 0; i < this.basics.Length; i++)
+    //    {
+    //        Transform parent = this.basics[i].transform.Find("Platforms");
+    //        for (int c = 0; c < parent.childCount;c++)
+    //        {
+    //            StickProperty property = parent.GetChild(c).GetComponent<StickProperty>();
+    //            //property.IsEnable = !property.IsEnable;
+    //        }
+    //    }
+    //}
     #endregion
 }

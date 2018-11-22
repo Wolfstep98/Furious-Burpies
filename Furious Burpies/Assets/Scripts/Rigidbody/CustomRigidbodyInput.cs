@@ -210,9 +210,17 @@ public class CustomRigidbodyInput : MonoBehaviour
                     }
                     else
                     {
-                        this.lifeProperty.TakeDamage(1);
-                        this.slowDownBehaviour.RevertSlowDown();
-                        this.customRigidbody.CatapultFromAir();
+                        if (this.lifeProperty.Life > 0)
+                        {
+                            this.lifeProperty.TakeDamage(1);
+                            this.slowDownBehaviour.RevertSlowDown();
+                            this.customRigidbody.CatapultFromAir();
+                        }
+                        else
+                        {
+                            this.canCatapult = false;
+                            return;
+                        }
                     }
 
                     this.canCatapult = false;
@@ -352,9 +360,17 @@ public class CustomRigidbodyInput : MonoBehaviour
                     }
                     else
                     {
-                        this.lifeProperty.TakeDamage(1);
-                        this.slowDownBehaviour.RevertSlowDown();
-                        this.customRigidbody.CatapultFromAir();
+                        if (this.lifeProperty.Life > 0)
+                        {
+                            this.lifeProperty.TakeDamage(1);
+                            this.slowDownBehaviour.RevertSlowDown();
+                            this.customRigidbody.CatapultFromAir();
+                        }
+                        else
+                        {
+                            this.playerLocked = false;
+                            return;
+                        }
                     }
 
                     this.playerLocked = false;
