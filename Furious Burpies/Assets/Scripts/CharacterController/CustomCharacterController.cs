@@ -265,7 +265,7 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
             if (bounceProperty != null)
             {
                 Debug.Log("Bounce");
-                this.Bounce(bounceProperty);
+                this.Bounce(new Collision(),bounceProperty);
             }
             else if (stickProperty != null && !this.isGrounded && !this.isStick)
             {
@@ -313,9 +313,9 @@ public class CustomCharacterController : MonoBehaviour, IStickBehaviour, IBounce
     }
 
     #region Behaviours
-    public void Bounce(IBounceProperty property)
+    public void Bounce(Collision collision, IBounceProperty property)
     {
-        if (property.IsEnabled)
+        if (property.IsEnable)
         {
             Vector2 vel = this.finalDirection;
 

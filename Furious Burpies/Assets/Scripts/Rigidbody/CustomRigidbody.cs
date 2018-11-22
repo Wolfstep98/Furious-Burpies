@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class CustomRigidbody : MonoBehaviour , IStickBehaviour
+public class CustomRigidbody : MonoBehaviour , IStickBehaviour, IBounceBehaviour
 {
     #region Fields & Properties
     [Header("       Parameters")]
@@ -41,10 +40,14 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
     [SerializeField]
 	new private Rigidbody rigidbody;
     public Rigidbody Rigidbody { get { return this.rigidbody; } }
+    [SerializeField]
+    private LifeProperty lifeProperty = null;
 
     [Header("Debug")]
     [SerializeField]
     private bool showGroundChecker = true;
+    [SerializeField]
+    private bool showVelocity = true;
     #endregion
 
     #region Methods
@@ -61,6 +64,8 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
 #if UNITY_EDITOR
         if (this.rigidbody == null)
             Debug.LogError("[Missing Reference] - rigidbody is missing !");
+        if (this.lifeProperty == null)
+            Debug.LogError("[Missing Reference] - lifeProperty is missing !");
 #endif
         this.raycastBitMask = 1 << LayerMask.NameToLayer("CollisionWithPlayer");
     }
@@ -84,15 +89,52 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collision !");
-        //Stick Behaviour
-        IStickProperty stickProperty = collision.gameObject.GetComponent<StickProperty>();
-        if(stickProperty != null)
+        switch (collision.gameObject.tag)
         {
-            if (stickProperty.IsEnable)
-            {
-                Debug.Log("Stick !");
-                this.Stick(collision, stickProperty);
-            }
+            case GameObjectsTags.Stick:
+                //Stick Behaviour
+                IStickProperty stickProperty = collision.gameObject.GetComponent<StickProperty>();
+                if (stickProperty != null)
+                {
+                    if (stickProperty.IsEnable)
+                    {
+                        Debug.Log("Stick !");
+                        this.Stick(collision, stickProperty);
+                    }
+                }
+                break;
+            case GameObjectsTags.Bounce:
+                //Bounce Behaviour
+                IBounceProperty bounceProperty = collision.gameObject.GetComponent<BounceProperty>();
+                if (bounceProperty != null)
+                {
+                    if (bounceProperty.IsEnable)
+                    {
+                        Debug.Log("Bounce !");
+                        this.Bounce(collision, bounceProperty);
+                    }
+                }
+                break;
+            case GameObjectsTags.Slip:
+                //Slip Behaviour
+                this.rigidbody.useGravity = false;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        Debug.Log("Collision exit!");
+        switch (collision.gameObject.tag)
+        {
+            case GameObjectsTags.Slip:
+                //Slip Behaviour
+                this.rigidbody.useGravity = true;
+                break;
+            default:
+                break;
         }
     }
 
@@ -111,8 +153,23 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
     }
     #endregion
 
-    #region Behaviours
+    #region Triggers
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag.Contains(GameObjectsTags.PowerUp))
+        {
+            if(other.tag.Contains(GameObjectsTags.LifePowerUp))
+            {
+                IPowerUpLifeUp lifeUp = other.GetComponent<PowerUpLifeUp>();
+                this.lifeProperty.AddLife(lifeUp.LifeAmount);
+                Destroy(other.gameObject);
+            }
+        }
+    }
 
+    #endregion
+
+    #region Behaviours
     #region Catapult
     public void CatapultFromGround()
     {
@@ -123,6 +180,18 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
     public void CatapultFromAir()
     {
         this.rigidbody.velocity = Vector3.zero;
+    }
+    #endregion
+
+    #region Bounce
+    public void Bounce(Collision collision, IBounceProperty property)
+    {
+        int normalX = Mathf.RoundToInt(collision.contacts[0].normal.x);
+        if (Math.Abs(normalX) == 1)
+        {
+            Debug.Log("Force added");
+            this.rigidbody.AddForce(Vector3.up * property.UpwardForceAdded, ForceMode.Impulse);
+        }
     }
     #endregion
 
@@ -165,6 +234,15 @@ public class CustomRigidbody : MonoBehaviour , IStickBehaviour
         {
             Gizmos.color = Color.black;
             Gizmos.DrawRay(this.transform.position + this.groundCheckerPosition, Vector3.down * this.groundCheckerDistance);
+        }
+        if(this.showVelocity)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawRay(this.transform.position, this.rigidbody.velocity);
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(this.transform.position, this.rigidbody.velocity.x * Vector3.right);
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(this.transform.position, this.rigidbody.velocity.y * Vector3.up);
         }
     }
     #endregion

@@ -12,6 +12,8 @@ public class TerrainGeneration : MonoBehaviour
 
     [Header("Procedural Generation")]
     [SerializeField]
+    private bool randomSeed = false;
+    [SerializeField]
     private int seed = 42;
 
     [Header("Terrains")]
@@ -92,7 +94,8 @@ public class TerrainGeneration : MonoBehaviour
 
     private void InitiliazeProcedural()
     {
-        Random.InitState((this.seed > 0) ? this.seed : Random.Range(1, int.MaxValue));
+        this.seed = (this.randomSeed) ? Random.Range(1, int.MaxValue) : this.seed;
+        Random.InitState(this.seed);
 
         Debug.Log("[Succes] - Procedural Generation correctly initialized !");
     }

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CustomRigidbodyInput : MonoBehaviour 
 {
@@ -13,6 +13,9 @@ public class CustomRigidbodyInput : MonoBehaviour
     private bool playerLocked = false;
     [SerializeField]
     private bool canCatapult = false;
+
+    [SerializeField]
+    private int nbrOfCatapult = 0;
 
     [SerializeField]
     private float maxInputDistance = 100;
@@ -35,6 +38,9 @@ public class CustomRigidbodyInput : MonoBehaviour
 
     [SerializeField]
     private Vector2 predictedVelocity = Vector2.zero;
+
+    [SerializeField]
+    private UnityEvent OnFirstCatapultInputDone;
 
     [Header("References")]
     [Header("Player", order = 1)]
@@ -90,6 +96,8 @@ public class CustomRigidbodyInput : MonoBehaviour
 
     private void Initiliaze()
     {
+        this.nbrOfCatapult = 0;
+
         //this.maxInputDistance = Screen.width / 4.0f;
         this.maxInputDistance = Screen.height / 4.0f;
 
@@ -229,8 +237,14 @@ public class CustomRigidbodyInput : MonoBehaviour
                     Debug.DrawRay(this.lockPos, direction, Color.red, 10.00f);
                     Debug.DrawRay(this.player.transform.position, direction, Color.black);
                     //Catapult !!!
-
+                    if (this.nbrOfCatapult == 0)
+                    {
+                        Debug.Log("First Catapult !");
+                        this.OnFirstCatapultInputDone.Invoke();
+                    }
                     //this.showTrajectory.HideTrajectoryPrediction(0);
+
+                    this.nbrOfCatapult++;
                 }
             }
 #else
@@ -364,8 +378,11 @@ public class CustomRigidbodyInput : MonoBehaviour
                     Debug.DrawRay(this.lockPos, direction, Color.red, 10.00f);
                     Debug.DrawRay(this.player.transform.position, direction, Color.black);
                     //Catapult !!!
-
+                    if (this.nbrOfCatapult == 0)
+                        this.OnFirstCatapultInputDone.Invoke();
                     this.showTrajectory.HideTrajectoryPrediction(0);
+
+                    this.nbrOfCatapult++;
                 }
             }
 #endif

@@ -3,7 +3,8 @@ using UnityEngine;
 
 public interface IBounceProperty
 {
-    bool IsEnabled { get; }
+    bool IsEnable { get; }
+    float UpwardForceAdded { get; }
     Vector2 BounceCoef { get; }
 }
 
@@ -12,11 +13,14 @@ public class BounceProperty : MonoBehaviour, IBounceProperty
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
-    private bool isEnabled = true;
-    public bool IsEnabled { get { return this.isEnabled; } }
+    private bool isEnable = true;
+    public bool IsEnable { get { return this.isEnable; } }
     [SerializeField]
     private Vector2 bounceCoef = new Vector2(0.5f, 0.5f);
     public Vector2 BounceCoef { get { return this.bounceCoef; } }
+    [SerializeField]
+    private float upwardForceAdded = 0.0f;
+    public float UpwardForceAdded { get { return this.upwardForceAdded; } }
 
     #endregion
 

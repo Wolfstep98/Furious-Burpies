@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface IBounceBehaviour
 {
-    void Bounce(IBounceProperty property);
+    void Bounce(Collision collision, IBounceProperty property);
 }
 
 /*

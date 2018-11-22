@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114987121241046492}
   m_Layer: 9
   m_Name: Cube_Bounce (1)
-  m_TagString: Untagged
+  m_TagString: Bounce
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 114390039684279854}
   m_Layer: 9
   m_Name: Cube_Slip
-  m_TagString: Untagged
+  m_TagString: Slip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 114999789282745918}
   m_Layer: 9
   m_Name: Cube_Stick (4)
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 212948132097817610}
   m_Layer: 9
   m_Name: Triangle_Bounce
-  m_TagString: Untagged
+  m_TagString: Bounce
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 114659518371437572}
   m_Layer: 9
   m_Name: Cube_Stick (5)
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 114271094898974814}
   m_Layer: 9
   m_Name: Cube_Bounce
-  m_TagString: Untagged
+  m_TagString: Bounce
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 114462694849509336}
   m_Layer: 9
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Slip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 114426561001882226}
   m_Layer: 9
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Slip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -363,7 +363,7 @@ GameObject:
   - component: {fileID: 114899387256683536}
   m_Layer: 9
   m_Name: Cube_Stick (3)
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -381,7 +381,7 @@ GameObject:
   - component: {fileID: 114132841180905910}
   m_Layer: 9
   m_Name: Cube_Stick (2)
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -399,7 +399,7 @@ GameObject:
   - component: {fileID: 114048824326503072}
   m_Layer: 9
   m_Name: Cube_Stick (1)
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -449,7 +449,7 @@ GameObject:
   - component: {fileID: 114166012480255582}
   m_Layer: 9
   m_Name: Cube_Stick
-  m_TagString: Untagged
+  m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -478,7 +478,7 @@ Transform:
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 16
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4204309528801868
 Transform:
@@ -517,7 +517,7 @@ Transform:
   m_LocalScale: {x: 3, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 22
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4279840662161234
 Transform:
@@ -596,7 +596,7 @@ Transform:
   m_Children:
   - {fileID: 4204309528801868}
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 18
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90.00001}
 --- !u!4 &4455764157742006
 Transform:
@@ -609,7 +609,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 21
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4493260965824154
 Transform:
@@ -622,7 +622,7 @@ Transform:
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 15
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4519727879086342
 Transform:
@@ -662,14 +662,14 @@ Transform:
   - {fileID: 4279840662161234}
   - {fileID: 4989842528914650}
   - {fileID: 4529840112360766}
+  - {fileID: 4455764157742006}
+  - {fileID: 4249082185345752}
   - {fileID: 4493260965824154}
   - {fileID: 4153141273086622}
+  - {fileID: 4923620335132430}
   - {fileID: 4918378827491796}
   - {fileID: 4444206795250358}
   - {fileID: 4549450393886380}
-  - {fileID: 4923620335132430}
-  - {fileID: 4455764157742006}
-  - {fileID: 4249082185345752}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -697,7 +697,7 @@ Transform:
   m_LocalScale: {x: 3, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 19
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4549977478334456
 Transform:
@@ -776,7 +776,7 @@ Transform:
   m_Children:
   - {fileID: 4963642138683078}
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 17
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90.00001}
 --- !u!4 &4923620335132430
 Transform:
@@ -790,7 +790,7 @@ Transform:
   m_Children:
   - {fileID: 4394346893975246}
   m_Father: {fileID: 4525775379700652}
-  m_RootOrder: 20
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180.00002}
 --- !u!4 &4945852328437832
 Transform:

@@ -6,7 +6,15 @@ public class KillZone : MonoBehaviour
     #region Fields & Properties
     [Header("Parameters")]
     [SerializeField]
+    private bool isActive = false;
+    [SerializeField]
+    private bool invertDirection = false;
+    [SerializeField]
     private float speed = 5.0f;
+    [SerializeField]
+    private Axis axis = Axis.X;
+    [SerializeField]
+    private Vector3 direction = Vector3.zero;
 
     [Header("References")]
     [SerializeField]
@@ -32,13 +40,46 @@ public class KillZone : MonoBehaviour
 # endif
 
         this.killZone.position = this.startingPoint.position;
+        this.isActive = false;
     }
     #endregion
 
-    private void Update()
+    public void ActivateKillZone()
     {
-        this.killZone.position += Vector3.right * this.speed * GameTime.deltaTime;
+        if (!this.isActive)
+        {
+            this.isActive = true;
+            this.direction = Vector3.zero;
+        }
     }
 
+    private void Update()
+    {
+        if (this.isActive)
+        {
+            switch(this.axis)
+            {
+                case Axis.X:
+                    this.direction = (this.invertDirection) ? Vector3.left : Vector3.right;
+                    break;
+                case Axis.Y:
+                    this.direction = (this.invertDirection) ? Vector3.down : Vector3.up;
+                    break;
+                case Axis.Z:
+                    this.direction = (this.invertDirection) ? Vector3.back : Vector3.forward;
+                    break;
+                default:
+                    break;
+            }
+            this.killZone.position += this.direction * this.speed * Time.deltaTime;
+        }
+    }
+
+    #region Debug
+    public void UpdateKillZoneSpeed(float value)
+    {
+        this.speed = value;
+    }
+    #endregion
     #endregion
 }
