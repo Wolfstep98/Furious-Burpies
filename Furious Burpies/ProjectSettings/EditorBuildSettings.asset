@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/TerrainCreation.unity
+    guid: 86f0a0f73525675468ca6a4a731302ad
+  - enabled: 1
+    path: Assets/Scenes/MecaCatapult.unity
+    guid: c888ca5b96f3d3849a912b7b90f72858
+  - enabled: 1
+    path: Assets/Scenes/MainScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}

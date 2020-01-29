@@ -1,0 +1,15 @@
+Tout se trouve dans le dossier Prefabs.
+Sous Platforms :
+	Nomenclature : Forme_Attribut
+	Exemple : Cube_Stick
+
+	Sous Terrains:
+	Nomenclature : Type_Orientation_Nombre
+	Exemple : Basic_Vertical_1
+
+Si le prefab a comme nom Type_Orientation sans nombre après, ela veut dire que c'est le terrain générique, tout les autres terrains doivent dériver de lui car il contient tout les composants qu'un terrian doit avoir.
+Pour créer un nouveau terrain on drag n drop le prefab du terrain generique dans la scene, ensuite on le renomme avec un nom adéquat et on le drag n drop dans les prefabs à l'endroit prévu.
+LE PREFAB GENERIQUE NE DOIT PAS ETRE MODIFIE !!!
+Une fois que le nouveau prefab de terrain est dans la scene, on drag n drop les bout de platform et on les place comme on veut, les limites d'un terrain sont indiqués dans la scene.
+Une fois qu'on a tout bien placé, on déplace le tout en enfant du prefab terrain, juste en dessous du gameObject --- Platforms ---, on sauvegarde le terrain en cliquant sur apply.
+Enfin, afin d'ajouter le terrain à la génération procédurale, il suffit de se rendre dans le GO TerrainGeneration, puis dans le script, Prefabs => le type de prefab => on ajoute une case au tableau et on drag n drop le prefab dans la case data.... et voila !!!
